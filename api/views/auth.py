@@ -1,4 +1,3 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -10,9 +9,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
-
-
-# Create your views here.
+from api.models import Seller, Buyer
 
 
 @api_view(["GET"])
@@ -26,11 +23,16 @@ def register(request):
     username = request.data.get("username", None)
     email = request.data.get("email", None)
     password = request.data.get("password", None)
+    is_seller = request.data.get("is_seller", False)
     if username is None or password is None:
         return Response({'error': 'provide both username and password'},
                         status=HTTP_400_BAD_REQUEST)
     try:
         user = User.objects.create_user(username, email, password)
+        if is_seller:
+            Seller.objects.create(user=user)
+        else:
+            Buyer.objects.create(user=user)
         message = "user registered successfully"
     except:
         message = "user already exists"
