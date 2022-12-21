@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'nft'
+      MYSQL_ROOT_PASSWORD: 'secret'
+    # ports:
+    #   - '3306:3306'
+  app:
+    build: .
+    entrypoint: gunicorn -w4 nft_listing.wsgi -b 0.0.0.0:8000
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    ports:
+      - 8585:8000
+    env_file:
+      - docker-compose.env
