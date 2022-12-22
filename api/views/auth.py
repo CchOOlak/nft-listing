@@ -12,11 +12,6 @@ from rest_framework.status import (
 from api.models import Seller, Buyer
 
 
-@api_view(["GET"])
-def helloworld(request):
-    return Response("Hello World!", status=HTTP_200_OK)
-
-
 @csrf_exempt
 @api_view(["POST"])
 def register(request):
@@ -25,7 +20,7 @@ def register(request):
     password = request.data.get("password", None)
     is_seller = request.data.get("is_seller", False)
     if username is None or password is None:
-        return Response({'error': 'provide both username and password'},
+        return Response({'message': 'provide both username and password'},
                         status=HTTP_400_BAD_REQUEST)
     try:
         user = User.objects.create_user(username, email, password)
@@ -41,7 +36,8 @@ def register(request):
     return Response({
         'token': token.key,
         'message': message,
-        }, status=HTTP_200_OK)
+    }, status=HTTP_200_OK)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -49,16 +45,16 @@ def login(request):
     username = request.data.get("username", None)
     password = request.data.get("password", None)
     if username is None or password is None:
-        return Response({'error': 'provide both username and password'},
+        return Response({'message': 'provide both username and password'},
                         status=HTTP_400_BAD_REQUEST)
     user = authenticate(username=username, password=password)
     if user is None:
         return Response({
-            'error': 'username or password is wrong',
-            }, status=HTTP_404_NOT_FOUND)
-    
+            'message': 'username or password is wrong',
+        }, status=HTTP_404_NOT_FOUND)
+
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
         'token': token.key,
         'message': 'login successfully',
-        }, status=HTTP_200_OK)
+    }, status=HTTP_200_OK)

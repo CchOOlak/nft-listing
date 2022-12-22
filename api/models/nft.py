@@ -24,3 +24,11 @@ class NFTOffer(models.Model):
         (2, 'accepted'),
     )
     status = models.IntegerField(choices=status_enum, default=0)
+
+    def save(self, *args, **kwargs):
+        if self.status == 2:
+            for offer in self.listing.offers.all():
+                # reject other offers of this listing
+                offer.status = 1
+                offer.save()
+        return super().save(*args, **kwargs)
