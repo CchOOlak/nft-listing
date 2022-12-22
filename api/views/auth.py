@@ -23,7 +23,8 @@ def register(request):
         return Response({'message': 'provide both username and password'},
                         status=HTTP_400_BAD_REQUEST)
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, email)
+        user.set_password(password)
         if is_seller:
             Seller.objects.create(user=user)
         else:

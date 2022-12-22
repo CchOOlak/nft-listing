@@ -9,14 +9,17 @@ from api.models import Buyer, Seller
 class NFTListing(models.Model):
     # nft = models.ForeignKey(NFT, related_name='listing', on_delete=models.CASCADE)
     nft = models.CharField(max_length=250, null=False)
-    seller = models.ForeignKey(Seller, related_name='listings', on_delete=models.CASCADE)
+    seller = models.ForeignKey(
+        Seller, related_name='listings', on_delete=models.CASCADE)
     fixed_price = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)
 
 
 class NFTOffer(models.Model):
-    listing = models.ForeignKey(NFTListing, related_name='offers', on_delete=models.CASCADE)
-    buyer = models.ForeignKey(Buyer, related_name='offers', on_delete=models.CASCADE)
+    listing = models.ForeignKey(
+        NFTListing, related_name='offers', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(
+        Buyer, related_name='offers', on_delete=models.CASCADE)
     price = models.IntegerField(default=0)
     status_enum = (
         (0, 'pending'),

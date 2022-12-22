@@ -8,6 +8,7 @@ class NFTListingSerializer(serializers.ModelSerializer):
         model = NFTListing
         exclude = []
 
+
 class NFTOfferSerializer(serializers.ModelSerializer):
     listing = NFTListingSerializer(many=False, read_only=True)
 

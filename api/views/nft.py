@@ -3,8 +3,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
+    HTTP_403_FORBIDDEN,
     HTTP_404_NOT_FOUND,
     HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_202_ACCEPTED,
 )
 
 from api.models import *
@@ -31,7 +34,7 @@ def add_listing(request):
 
     return Response({
         "message": "listing created successfully"
-    }, status=HTTP_200_OK)
+    }, status=HTTP_201_CREATED)
 
 
 @api_view(["GET"])
@@ -76,15 +79,15 @@ def add_offer(request):
     offer.save()
     return Response({
         "message": "offer created successfully",
-    }, HTTP_200_OK)
+    }, HTTP_201_CREATED)
 
 
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((IsSeller,))
 def determine_offer(request, offer_id):
-    status = request.data.get("status", None)
-    if status is None or not (status == 1 or status == 2):
+    status = int(request.data.get("status", 0))
+    if status != 1 and status != 2:
         return Response({
             "message": "wrong input",
         }, HTTP_400_BAD_REQUEST)
@@ -94,8 +97,12 @@ def determine_offer(request, offer_id):
         return Response({
             "message": "offer not found",
         }, HTTP_404_NOT_FOUND)
+    if offer.listing.seller_id != request.user.seller.all()[0].id:
+        return Response({
+            "message": "permission denied",
+        }, HTTP_403_FORBIDDEN)
     offer.status = status
     offer.save()
     return Response({
         "message": "offer determined successfully"
-    }, HTTP_200_OK)
+    }, HTTP_202_ACCEPTED)

@@ -4,11 +4,14 @@ from rest_framework.permissions import BasePermission
 
 
 class Seller(models.Model):
-    user = models.ForeignKey(User, related_name='seller', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name='seller', on_delete=models.CASCADE)
 
 
 class Buyer(models.Model):
-    user = models.ForeignKey(User, related_name='buyer', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='buyer',
+                             on_delete=models.CASCADE)
+
 
 class IsSeller(BasePermission):
     def has_permission(self, request, view):
@@ -16,6 +19,7 @@ class IsSeller(BasePermission):
             user = request.user
             return len(user.seller.all()) == 1
         return False
+
 
 class IsBuyer(BasePermission):
     def has_permission(self, request, view):
