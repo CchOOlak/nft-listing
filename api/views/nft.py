@@ -28,8 +28,8 @@ def add_listing(request):
     listing = NFTListing()
     listing.nft = nft
     listing.seller = request.user.seller.all()[0]
-    listing.fixed_price = fixed_price
-    listing.view_count = view_count
+    listing.fixed_price = int(fixed_price)
+    listing.view_count = int(view_count)
     listing.save()
 
     return Response({
@@ -67,7 +67,7 @@ def add_offer(request):
             "message": "wrong input",
         }, HTTP_400_BAD_REQUEST)
     try:
-        listing = NFTListing.objects.get(pk=listing_id)
+        listing = NFTListing.objects.get(pk=int(listing_id))
     except:
         return Response({
             "message": "listing not found",
@@ -75,7 +75,7 @@ def add_offer(request):
     offer = NFTOffer()
     offer.listing = listing
     offer.buyer = request.user.buyer.all()[0]
-    offer.price = price
+    offer.price = int(price)
     offer.save()
     return Response({
         "message": "offer created successfully",
