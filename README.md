@@ -79,11 +79,13 @@ for tests:
   - method: `GET`
   - header: `Authorization: Token {apiToken}`
   - permission: `Seller - Buyer`
+  - query parameters:
+    - `ordering`=`fixed_price` | `-fixed_price` | `view_count` | `-view_count`
 - Get Offers:
   - url: `/api/nft/offers/`
   - method: `GET`
   - header: `Authorization: Token {apiToken}`
-  - permission: `Seller - Buyer`
+  - permission: `Buyer`
 - Add Offer:
   - url: `/api/nft/offers/add`
   - method: `POST`
