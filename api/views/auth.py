@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -24,19 +25,19 @@ def register(request):
                         status=HTTP_400_BAD_REQUEST)
     try:
         user = User.objects.create_user(username, email)
-        user.set_password(password)
-        if is_seller:
-            Seller.objects.create(user=user)
-        else:
-            Buyer.objects.create(user=user)
-        message = "user registered successfully"
     except:
-        message = "user already exists"
+        return Response({"message": "user already exists"}, status=HTTP_400_BAD_REQUEST)
+    user.set_password(password)
+    user.save()
+    if is_seller:
+        Seller.objects.create(user=user)
+    else:
+        Buyer.objects.create(user=user)
     user = authenticate(username=username, password=password)
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
         'token': token.key,
-        'message': message,
+        'message': "user registered successfully",
     }, status=HTTP_200_OK)
 
 
